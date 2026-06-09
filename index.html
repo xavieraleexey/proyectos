@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Exhaustivo de Sistemas LIT | Ingeniería en Telecomunicaciones</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                tags: 'ams'
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-surface: #111111;
+            --bg-card: #1a1a1a;
+            --primary: #00e5ff;
+            --primary-glow: rgba(0, 229, 255, 0.15);
+            --secondary: #7000ff;
+            --text-main: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --border-color: #2a2a2a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+            font-size: 1.1rem;
+        }
+
+        /* Barra de Progreso de Lectura */
+        .progress-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: transparent; z-index: 9999;
+        }
+        .progress-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Sección Hero / Portada */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            background: radial-gradient(circle at 50% 0%, var(--primary-glow) 0%, transparent 60%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 100px 20px 50px 20px;
+        }
+
+        .hero-badge {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--primary); font-size: 0.9rem; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            padding: 8px 20px; border: 1px solid var(--primary);
+            border-radius: 30px; margin-bottom: 30px;
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem; font-weight: 800; line-height: 1.1;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff, #888888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hero p { color: var(--text-muted); max-width: 800px; margin-bottom: 40px; font-size: 1.2rem; }
+
+        /* Integrantes del Grupo */
+        .team-container {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+            margin-top: 20px; max-width: 900px;
+        }
+        .team-member {
+            background: var(--bg-card); padding: 10px 20px; border-radius: 8px;
+            font-family: 'Fira Code', monospace; font-size: 0.85rem;
+            border: 1px solid var(--border-color); color: var(--text-muted);
+            transition: 0.3s ease;
+        }
+        .team-member:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-3px); }
+
+        /* Contenido Principal */
+        main { padding: 80px 0; }
+        
+        section {
+            margin-bottom: 100px; opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem;
+            color: var(--text-main); margin-bottom: 30px;
+            display: flex; align-items: center; gap: 20px;
+        }
+        h2::before {
+            content: ''; display: block; width: 50px; height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+        h3 { font-family: 'Space Grotesk', sans-serif; color: var(--primary); margin: 30px 0 15px 0; font-size: 1.5rem; }
+
+        p { margin-bottom: 25px; text-align: justify; }
+        ul { margin-bottom: 25px; padding-left: 20px; color: var(--text-muted); }
+        li { margin-bottom: 10px; }
+
+        /* Cajas Matemáticas */
+        .math-box {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-left: 4px solid var(--secondary); border-radius: 12px;
+            padding: 30px; margin: 40px 0; overflow-x: auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); font-size: 1.15rem;
+        }
+
+        .math-caption {
+            text-align: center; font-family: 'Fira Code', monospace;
+            font-size: 0.85rem; color: var(--text-muted); margin-top: -25px; margin-bottom: 40px;
+        }
+
+        /* Imágenes */
+        .feature-img {
+            width: 100%; height: 400px; object-fit: cover; border-radius: 16px;
+            margin: 40px 0; border: 1px solid var(--border-color);
+            filter: grayscale(20%) contrast(120%); transition: 0.5s;
+        }
+        .feature-img:hover { filter: grayscale(0%) contrast(100%); }
+
+        /* Simulador Interactivo */
+        .simulator {
+            background: linear-gradient(180deg, var(--bg-surface), var(--bg-card));
+            border: 1px solid var(--border-color); border-radius: 20px;
+            padding: 50px; margin: 60px 0; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        
+        .control-group { background: var(--bg-base); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 600; color: var(--text-muted); }
+        .control-group span { color: var(--primary); font-family: 'Fira Code', monospace; }
+        
+        input[type="range"] { width: 100%; height: 8px; background: #333; border-radius: 4px; outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
+            background: var(--primary); cursor: pointer; transition: 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 0 15px var(--primary); }
+
+        .chart-wrapper { background: #000; border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); }
+
+        .calc-result { text-align: center; margin-top: 30px; font-size: 1.2rem; }
+        .calc-result strong { color: var(--primary); font-family: 'Fira Code', monospace; font-size: 1.5rem; }
+
+        /* Sección de Evaluación */
+        .evaluation-box {
+            background: radial-gradient(circle at center, rgba(112, 0, 255, 0.15) 0%, var(--bg-surface) 100%);
+            border: 1px solid var(--secondary); border-radius: 24px;
+            padding: 80px 40px; text-align: center; margin-top: 80px;
+        }
+        
+        .btn-eval {
+            display: inline-block; margin-top: 30px; padding: 20px 50px;
+            background: var(--secondary); color: #fff; text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700;
+            border-radius: 50px; transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(112, 0, 255, 0.4); text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-eval:hover {
+            background: var(--primary); transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 229, 255, 0.4); color: #000;
+        }
+
+        footer { text-align: center; padding: 50px 20px; color: var(--text-muted); border-top: 1px solid var(--border-color); font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .sim-grid { grid-template-columns: 1fr; }
+            .simulator { padding: 30px 20px; }
+            .hero { padding-top: 150px; }
+        }
+    </style>
+</head>
+<body class="tex2jax_ignore">
+
+    <div class="progress-container"><div class="progress-bar" id="readingProgress"></div></div>
+
+    <header class="hero tex2jax_process">
+        <div class="container">
+            <div class="hero-badge">Ingeniería en Telecomunicaciones — UTN</div>
+            <h1>Análisis Integral de Sistemas LIT y Ecuaciones Diferenciales</h1>
+            <p>Una investigación exhaustiva sobre el modelado matemático de sistemas continuos, funciones propias, transformadas integrales y su aplicación directa en el diseño de filtros analógicos para radiofrecuencia.</p>
+            
+            </div>
+        </div>
+    </header>
+
+    <main class="container tex2jax_process">
+        
+        <section>
+            <h2>1. Naturaleza de los Sistemas LIT</h2>
+            <p>En el corazón de la ingeniería de telecomunicaciones y la teoría de control yace el estudio de los <strong>Sistemas Lineales e Invariantes en el Tiempo (LIT)</strong> de tiempo continuo. El poder analítico de estos sistemas no proviene de su complejidad intrínseca, sino de las severas restricciones axiomáticas que se les imponen.</p>
+            
+            <h3>1.1. Propiedad de Linealidad</h3>
+            <p>Un sistema es lineal si, y solo si, obedece al principio de superposición. Esto engloba dos sub-propiedades: aditividad y homogeneidad (escalamiento). Si una entrada $x_1(t)$ produce $y_1(t)$ y una entrada $x_2(t)$ produce $y_2(t)$, el sistema debe cumplir estrictamente que:</p>
+            <div class="math-box">
+                $$\mathcal{T}\{a x_1(t) + b x_2(t)\} = a y_1(t) + b y_2(t)$$
+            </div>
+
+            <h3>1.2. Propiedad de Invarianza Temporal</h3>
+            <p>La invarianza en el tiempo dictamina que las características físicas del sistema no cambian con la evolución del reloj absoluto. Un desplazamiento en la excitación resulta en un desplazamiento idéntico en la respuesta:</p>
+            <div class="math-box">
+                $$Si \ \mathcal{T}\{x(t)\} = y(t) \implies \mathcal{T}\{x(t - \tau)\} = y(t - \tau) \quad \forall \tau \in \mathbb{R}$$
+            </div>
+            
+            <p>La conjunción de ambos axiomas garantiza que el sistema entero pueda ser modelado y predicho evaluando su comportamiento frente a la señal más fundamental posible: la función delta de Dirac $\delta(t)$. A la respuesta resultante se la denomina <strong>Respuesta al Impulso $h(t)$</strong>.</p>
+        </section>
+
+        <section>
+            <h2>2. La Integral de Convolución</h2>
+            <p>Sabiendo que cualquier señal continua $x(t)$ puede representarse como un continuo de impulsos escalados y desplazados en el tiempo (mediante la propiedad de tamizado de la función impulso), la salida de un sistema LIT ante cualquier entrada arbitraria se calcula mediante la <strong>Integral de Convolución</strong>.</p>
+            
+            <div class="math-box">
+                $$y(t) = x(t) * h(t) = \int_{-\infty}^{\infty} x(\tau) h(t - \tau) d\tau = \int_{-\infty}^{\infty} h(\tau) x(t - \tau) d\tau$$
+            </div>
+            <div class="math-caption">Ecuación fundamental de la convolución en tiempo continuo</div>
+
+            <p>Esta integral, aunque matemáticamente elegante, resulta computacionalmente exhaustiva de resolver en el dominio del tiempo para señales complejas (como las modulaciones M-QAM o señales de espectro ensanchado en telecomunicaciones). Aquí es donde emerge la necesidad de transformar el dominio de análisis buscando las "funciones propias" del sistema.</p>
+            
+            <img class="feature-img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" alt="Placa de circuito impreso y procesamiento de señales">
+        </section>
+
+        <section>
+            <h2>3. Funciones Propias (Eigenfunctions)</h2>
+            <p>En álgebra lineal, un vector propio (eigenvector) de una matriz es aquel que, al ser multiplicado por dicha matriz, no cambia su dirección, sino únicamente su escala mediante un factor escalar $\lambda$ (eigenvalue). Análogamente, en la teoría de señales y sistemas, una <strong>función propia</strong> es una señal $x(t)$ que, al pasar por un operador LIT, produce una salida $y(t)$ que es proporcional a la entrada original.</p>
+            
+            <h3>3.1. La Exponencial Compleja</h3>
+            <p>Para los sistemas LIT continuos, las funciones propias universales son las señales exponenciales complejas:</p>
+            <div class="math-box">
+                $$x(t) = e^{st} \quad \text{donde } s \in \mathbb{C} \ (s = \sigma + j\omega)$$
+            </div>
+
+            <h3>3.2. Demostración Analítica</h3>
+            <p>Para validar esta aseveración, inyectemos la señal $x(t) = e^{st}$ en la integral de convolución:</p>
+            <div class="math-box">
+                $$y(t) = \int_{-\infty}^{\infty} h(\tau) e^{s(t - \tau)} d\tau$$
+            </div>
+            <p>Por propiedades de los exponentes, factorizamos $e^{s(t - \tau)} = e^{st}e^{-s\tau}$. Puesto que la integral se evalúa respecto a $\tau$, el término $e^{st}$ es constante respecto a la integración y puede extraerse:</p>
+            <div class="math-box">
+                $$y(t) = e^{st} \int_{-\infty}^{\infty} h(\tau) e^{-s\tau} d\tau$$
+            </div>
+            
+            <p>El término integral es independiente del tiempo $t$ y depende únicamente de la respuesta física del sistema $h(t)$ y de la variable compleja de frecuencia $s$. A esta constante compleja se la denomina <strong>Función de Transferencia $H(s)$</strong>, y actúa como el valor propio del sistema.</p>
+            <div class="math-box" style="border-left-color: var(--primary);">
+                $$H(s) \triangleq \int_{-\infty}^{\infty} h(\tau) e^{-s\tau} d\tau \implies y(t) = H(s) e^{st}$$
+            </div>
+            <p>Este resultado es monumental: demuestra que la Transformada de Laplace de la respuesta al impulso es, de hecho, el valor propio asociado a la función propia $e^{st}$.</p>
+        </section>
+
+        <section>
+            <h2>4. Modelado Físico: Ecuaciones Diferenciales (LCCDE)</h2>
+            <p>Los sistemas reales no nacen conociendo su respuesta al impulso. Un circuito de radiofrecuencia, una antena o una línea de transmisión se rigen por las ecuaciones de Maxwell, las leyes de Kirchhoff o las leyes de la mecánica Newtoniana. Estas leyes relacionan las tasas de variación de las variables de estado, generando <strong>Ecuaciones Diferenciales Lineales con Coeficientes Constantes (LCCDE)</strong>.</p>
+            
+            <div class="math-box">
+                $$\sum_{k=0}^{N} a_k \frac{d^k y(t)}{dt^k} = \sum_{m=0}^{M} b_m \frac{d^m x(t)}{dt^m}$$
+            </div>
+            
+            <p>Aquí, $a_k$ y $b_m$ son parámetros invariantes que representan los componentes de hardware (resistores, capacitores, inductores). Resolver esta ecuación diferencial de enésimo orden en el dominio del tiempo es una tarea ardua que involucra encontrar soluciones homogéneas y particulares.</p>
+            
+            <h3>4.1. Transformación al Dominio de la Frecuencia $s$</h3>
+            <p>La magia de las funciones propias $e^{st}$ es que el operador de diferenciación se reduce a una simple multiplicación algebraica. Dado que $\frac{d}{dt} e^{st} = s e^{st}$, aplicar la Transformada de Laplace a ambos lados de la LCCDE (asumiendo reposo inicial) convierte la ecuación diferencial en un polinomio algebraico:</p>
+            <div class="math-box">
+                $$\left( \sum_{k=0}^{N} a_k s^k \right) Y(s) = \left( \sum_{m=0}^{M} b_m s^m \right) X(s)$$
+            </div>
+            <p>Lo que nos permite despejar la Función de Transferencia $H(s)$ directamente como una función racional:</p>
+            <div class="math-box">
+                $$H(s) = \frac{Y(s)}{X(s)} = \frac{\sum_{m=0}^{M} b_m s^m}{\sum_{k=0}^{N} a_k s^k}$$
+            </div>
+        </section>
+
+        <section>
+            <h2>5. Análisis de Estabilidad: Polos y Ceros</h2>
+            <p>Tener $H(s)$ en forma racional nos permite factorizar el numerador y el denominador. Las raíces del numerador se denominan <strong>Ceros</strong> (frecuencias complejas donde la salida del sistema es nula), y las raíces del denominador se denominan <strong>Polos</strong> (frecuencias donde el sistema tiende al infinito o resuena).</p>
+
+            <p>La ubicación de los polos en el plano complejo $s$ (donde $s = \sigma + j\omega$) dicta la <strong>estabilidad</strong> del sistema telecomunicacional:</p>
+            <ul>
+                <li><strong>Polos en el semiplano izquierdo ($\sigma < 0$):</strong> El sistema es asintóticamente estable. La respuesta transitoria decae exponencialmente a cero.</li>
+                <li><strong>Polos en el eje imaginario ($\sigma = 0$):</strong> El sistema oscila permanentemente (marginalmente estable). Este es el principio de diseño de los osciladores locales en transceptores de RF.</li>
+                <li><strong>Polos en el semiplano derecho ($\sigma > 0$):</strong> El sistema es inestable. La señal crece exponencialmente hasta la saturación del hardware.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>6. Caso de Estudio: Filtro Paso Bajo Analógico (RC)</h2>
+            <p>Para materializar todo este bagaje matemático, diseñemos un filtro pasivo básico RC, el bloque constructivo más utilizado en la etapa de demodulación de banda base y eliminación de ruido de alta frecuencia (Anti-Aliasing).</p>
+            
+            <p>Aplicando la Ley de Corrientes de Kirchhoff (KCL) al nodo del condensador, igualando la corriente que entra por la resistencia con la que absorbe el condensador:</p>
+            <div class="math-box">
+                $$\frac{x(t) - y(t)}{R} = C \frac{dy(t)}{dt} \implies RC \frac{dy(t)}{dt} + y(t) = x(t)$$
+            </div>
+
+            <p>Al someter esta LCCDE de primer orden a la Transformada de Laplace:</p>
+            <div class="math-box">
+                $$RC s Y(s) + Y(s) = X(s) \implies Y(s) [RC s + 1] = X(s)$$
+            </div>
+
+            <p>Despejando, obtenemos la función de transferencia del filtro, la cual posee un único polo en $s = -1/RC$ (sistema estable):</p>
+            <div class="math-box">
+                $$H(s) = \frac{1}{RC s + 1}$$
+            </div>
+
+            <p>Para observar la Respuesta en Frecuencia aplicable en telecomunicaciones, evaluamos la función en el eje imaginario puro (estado estacionario senoidal), haciendo $s = j\omega$:</p>
+            <div class="math-box" style="border-left-color: #00e5ff;">
+                $$H(j\omega) = \frac{1}{1 + j\omega RC}$$
+            </div>
+            
+            <p>La magnitud de esta respuesta compleja, $|H(j\omega)|$, define qué frecuencias pasan y cuáles se atenúan. Para bajas frecuencias ($\omega \ll 1/RC$), $|H(j\omega)| \approx 1$ (0 dB de atenuación). Para altas frecuencias ($\omega \gg 1/RC$), $|H(j\omega)| \to 0$ (atenuación severa).</p>
+        </section>
+
+        <section>
+            <h2>7. Simulador Interactivo de Respuesta en Frecuencia</h2>
+            <p>Utiliza los controles deslizantes para alterar físicamente los valores de los componentes de hardware (Resistor y Capacitor) y observa en tiempo real cómo se desplaza la Frecuencia de Corte ($f_c$) y el diagrama de magnitud (Diagrama de Bode).</p>
+            
+            <div class="simulator">
+                <div class="sim-grid">
+                    <div class="control-group">
+                        <label>Resistencia ($R$) <span id="valR">1.0 kΩ</span></label>
+                        <input type="range" id="inputR" min="100" max="20000" step="100" value="1000">
+                    </div>
+                    <div class="control-group">
+                        <label>Capacitancia ($C$) <span id="valC">1.0 µF</span></label>
+                        <input type="range" id="inputC" min="0.01" max="10" step="0.01" value="1.0">
+                    </div>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="bodeCanvas" height="120"></canvas>
+                </div>
+                
+                <div class="calc-result">
+                    Frecuencia de Corte ($f_c = \frac{1}{2\pi RC}$): <br>
+                    <strong id="valFc">159.15 Hz</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="evaluation-box">
+            <h2>8. Link de Evaluación de Conocimientos</h2>
+            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+                Hemos finalizado la investigación y demostración técnica. Se solicita a todos los participantes acceder al siguiente cuestionario para evaluar la asimilación teórica y práctica de los Sistemas LIT, LCCDE y la teoría de Funciones Propias.
+            </p>
+            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=aRS-jZzHIU6dQ8pl2enEdTni8w_TVlRJvusYSBOuMkBUOUpIM1NIRUJCRENaQk1QTDZJSVpLVFhHQi4u" target="_blank" class="btn-eval">
+                Acceder a la Evaluación
+            </a>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Documento de Investigación Académica</p>
+        <p><strong>Universidad Técnica del Norte</strong> | Facultad de Ingeniería en Ciencias Aplicadas (FICA)</p>
+        <p style="margin-top: 10px; font-size: 0.8rem;">Carrera de Telecomunicaciones © 2024</p>
+    </footer>
+
+    <script>
+        // 1. Barra de Progreso de Lectura
+        window.onscroll = function() {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("readingProgress").style.width = scrolled + "%";
+        };
+
+        // 2. Animaciones de Intersección (Scroll Reveal)
+        const sections = document.querySelectorAll('section');
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        
+        const sectionObserver = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(sec => sectionObserver.observe(sec));
+
+        // 3. Motor del Simulador Gráfico (Chart.js)
+        const ctx = document.getElementById('bodeCanvas').getContext('2d');
+        let bodeChart;
+
+        function renderSimulation() {
+            const R_ohms = parseFloat(document.getElementById('inputR').value);
+            const C_micro = parseFloat(document.getElementById('inputC').value);
+            const C_farads = C_micro * 1e-6;
+
+            // Actualizar textos en la UI
+            document.getElementById('valR').textContent = (R_ohms >= 1000) ? (R_ohms/1000).toFixed(1) + ' kΩ' : R_ohms + ' Ω';
+            document.getElementById('valC').textContent = C_micro.toFixed(2) + ' µF';
+            
+            const fc = 1 / (2 * Math.PI * R_ohms * C_farads);
+            document.getElementById('valFc').textContent = (fc >= 1000) ? (fc/1000).toFixed(2) + ' kHz' : fc.toFixed(2) + ' Hz';
+
+            // Cálculos para la gráfica de Bode
+            const freqs = [];
+            const magnitudes = [];
+            
+            // Barrido logarítmico de frecuencias de 1Hz a 100kHz
+            for (let f = 1; f <= 100000; f *= 1.3) {
+                const w = 2 * Math.PI * f;
+                const mag = 1 / Math.sqrt(1 + Math.pow(w * R_ohms * C_farads, 2));
+                freqs.push(f);
+                magnitudes.push(mag);
+            }
+
+            if (bodeChart) bodeChart.destroy();
+
+            bodeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: freqs,
+                    datasets: [{
+                        label: 'Magnitud |H(jω)|',
+                        data: magnitudes,
+                        borderColor: '#00e5ff',
+                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Frecuencia (Hz)', color: '#a3a3a3' },
+                            grid: { color: '#2a2a2a' }, ticks: { color: '#a3a3a3' }
+                        },
+                        y: {
+                            min: 0, max: 1.1,
+                            title: { display: true, text: 'Ganancia', color: '#a3a3a3' },
+                            grid: { color: '#2a2a2a' }, ticks: { color: '#a3a3a3' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: function(context) { return 'Ganancia: ' + context.parsed.y.toFixed(3); } } }
+                    }
+                }
+            });
+        }
+
+        // Listeners
+        document.getElementById('inputR').addEventListener('input', renderSimulation);
+        document.getElementById('inputC').addEventListener('input', renderSimulation);
+        
+        // Carga Inicial
+        renderSimulation();
+    </script>
+</body>
+</html>
